@@ -1,0 +1,47 @@
+# 공통 JPA 설정
+spring:
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+
+---
+
+# local 프로파일 (MySQL)
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/gameple?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
+    username: gameple
+    password: gameple
+    hikari:
+      maximum-pool-size: 5
+      connection-timeout: 1100
+      idle-timeout: 30000
+      max-lifetime: 600000
+      pool-name: core-db-pool
+      data-source-properties:
+        socketTimeout: 3000
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+        useLocalSessionState: true
+        rewriteBatchedStatements: true
+        cacheResultSetMetadata: true
+        cacheServerConfiguration: true
+        elideSetAutoCommits: true
+        maintainTimeStats: false
+  jpa:
+    ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        show_log: true

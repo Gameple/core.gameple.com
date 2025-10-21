@@ -1,1 +1,14 @@
-spring.application.name=core-api
+spring:
+  application:
+    name: core-api
+  profiles:
+    active: local
+  config:
+    import: db-core.yml
+
+server:
+  tomcat:
+    max-connections: 20000
+    threads:
+      max: 600
+      min-spare: 100
