@@ -1,3 +1,5 @@
-rootProject.name = 'gameple-core'
+rootProject.name = 'core.gameple.com'
 
 include 'core:core-api'
+include 'core:core-enum'
+include 'storage:db-core'
