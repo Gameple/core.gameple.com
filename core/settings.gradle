@@ -1,1 +1,3 @@
-rootProject.name = 'core'
+rootProject.name = 'gameple-core'
+
+include 'core:core-api'
