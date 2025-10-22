@@ -14,6 +14,9 @@ public class UserProfile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private Long userId;
+
     @Column(unique = true, nullable = false, length = 255)
     private String nickName;
 
@@ -21,8 +24,8 @@ public class UserProfile {
     private String imageUrl;
 
     @Builder
-    public UserProfile(String nickName, String imageUrl) {
+    public UserProfile(Long userId, String nickName) {
+        this.userId = userId;
         this.nickName = nickName;
-        this.imageUrl = imageUrl;
     }
 }

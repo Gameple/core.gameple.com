@@ -18,7 +18,7 @@ public class UserLoginLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id")
+    @Column(nullable = false)
     private Long userId;
 
     @Enumerated(EnumType.STRING)
