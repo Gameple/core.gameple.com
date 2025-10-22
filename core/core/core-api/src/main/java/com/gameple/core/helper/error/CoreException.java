@@ -1,8 +1,6 @@
 package com.gameple.core.helper.error;
 
-
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 public class CoreException extends RuntimeException {
