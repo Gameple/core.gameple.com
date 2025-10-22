@@ -1,12 +1,13 @@
 package com.gameple.core.entity;
 
-import com.gameple.core.helper.AesCrypto;
 import com.gameple.core.helper.AesEncryptConverter;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
 @Table(name = "gameple_user")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

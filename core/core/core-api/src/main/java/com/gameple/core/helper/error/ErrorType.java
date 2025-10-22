@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorType {
 
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, ErrorCode.E400, "요청이 올바르지 않습니다.", LogLevel.INFO),
-    NOT_FOUND_DATA(HttpStatus.BAD_REQUEST, ErrorCode.E401, "해당 데이터를 찾을 수 없습니다.", LogLevel.ERROR),
+    NOT_FOUND_DATA(HttpStatus.BAD_REQUEST, ErrorCode.E402, "해당 데이터를 찾을 수 없습니다.", LogLevel.ERROR),
     DEFAULT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.E500, "An unknown error has occurred. Please try again later.", LogLevel.ERROR),
 
     EMAIL_ALREADY_EXIST(HttpStatus.BAD_REQUEST, ErrorCode.E1000, "이미 존재하는 이메일입니다.", LogLevel.INFO),

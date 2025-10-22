@@ -1,10 +1,19 @@
 package com.gameple.core.domain;
 
+import com.gameple.core.api.controller.v1.request.AuthenticateUserRequest;
 import com.gameple.core.api.controller.v1.request.CreateUserRequest;
+import com.gameple.core.api.controller.v1.response.AuthenticateUserResponse;
+import com.gameple.core.api.controller.v1.response.UserTokenInfo;
+import com.gameple.core.entity.RefreshToken;
 import com.gameple.core.entity.User;
+import com.gameple.core.entity.UserLoginLog;
 import com.gameple.core.entity.UserProfile;
+import com.gameple.core.enums.LoginLogType;
+import com.gameple.core.helper.JwtUtil;
 import com.gameple.core.helper.error.CoreException;
 import com.gameple.core.helper.error.ErrorType;
+import com.gameple.core.repository.RefreshTokenRepository;
+import com.gameple.core.repository.UserLoginLogRepository;
 import com.gameple.core.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,14 +21,22 @@ import org.springframework.stereotype.Service;
 import com.gameple.core.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
+    private final JwtUtil jwtUtil;
+
     private final UserRepository userRepository;
 
     private final UserProfileRepository userProfileRepository;
+
+    private final UserLoginLogService userLoginLogService;
+
+    private final RefreshTokenRepository refreshTokenRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -52,5 +69,37 @@ public class UserService {
         userProfileRepository.save(userProfile);
 
         return newUser.getEmail();
+    }
+
+    @Transactional
+    public UserTokenInfo authenticateUser(AuthenticateUserRequest authenticateUserInfo) {
+
+        User targetUser = userRepository.findByEmail(authenticateUserInfo.getEmail())
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
+
+        boolean passwordMatching = passwordEncoder.matches(authenticateUserInfo.getPassword(), targetUser.getPasswordHash());
+        if(!passwordMatching) {
+            userLoginLogService.recordFail(targetUser.getId());
+            throw new CoreException(ErrorType.USER_PASSWORD_MISMATCH);
+        }
+
+        String accessToken = jwtUtil.generateToken(targetUser.getEmail());
+        String refreshToken = UUID.randomUUID().toString();
+
+        RefreshToken newRefreshToken = RefreshToken.builder()
+                .userId(targetUser.getId())
+                .token(refreshToken)
+                .build();
+
+        refreshTokenRepository.save(newRefreshToken);
+
+        userLoginLogService.recordSuccess(targetUser.getId());
+
+        UserTokenInfo userTokenInfo = UserTokenInfo.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+
+        return userTokenInfo;
     }
 }

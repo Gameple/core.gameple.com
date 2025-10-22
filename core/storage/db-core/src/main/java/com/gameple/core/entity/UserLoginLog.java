@@ -1,6 +1,8 @@
 package com.gameple.core.entity;
 
 import com.gameple.core.enums.LoginLogType;
+import com.gameple.core.helper.AesEncryptConverter;
+import com.gameple.core.helper.IpAddressHolder;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -8,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 @Entity
 @Table(name = "gameple_user_login_log")
@@ -25,9 +28,7 @@ public class UserLoginLog {
     @Column(columnDefinition = "VARCHAR(20)")
     private LoginLogType status;
 
-    @Column(updatable = false, name = "login_at")
-    private Instant loginAt;
-
+    @Convert(converter = AesEncryptConverter.class)
     @Column(nullable = false, length = 255)
     private String createdIpAddress;
 
@@ -35,11 +36,14 @@ public class UserLoginLog {
     @Column(nullable = false, name = "created_at")
     private Instant createdAt;
 
+    @PrePersist
+    public void prePersist() {
+        this.createdIpAddress = IpAddressHolder.get();
+    }
+
     @Builder
-    public UserLoginLog(Long userId, String createdIpAddress, LoginLogType loginLogType, Instant loginAt) {
+    public UserLoginLog(Long userId, LoginLogType loginLogType) {
         this.userId = userId;
-        this.createdIpAddress = createdIpAddress;
         this.status = loginLogType;
-        this.loginAt = loginAt;
     }
 }
