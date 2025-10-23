@@ -6,10 +6,10 @@ import lombok.Data;
 @Data
 public class AuthenticateUserResponse {
 
-    private final UserTokenInfo userTokenInfo;
+    private final String accessToken;
 
     @Builder
-    public AuthenticateUserResponse(UserTokenInfo userTokenInfo) {
-        this.userTokenInfo = userTokenInfo;
+    public AuthenticateUserResponse(String accessToken) {
+        this.accessToken = accessToken;
     }
 }
