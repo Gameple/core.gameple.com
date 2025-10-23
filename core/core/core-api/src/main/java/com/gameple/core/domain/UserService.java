@@ -2,18 +2,14 @@ package com.gameple.core.domain;
 
 import com.gameple.core.api.controller.v1.request.AuthenticateUserRequest;
 import com.gameple.core.api.controller.v1.request.CreateUserRequest;
-import com.gameple.core.api.controller.v1.response.AuthenticateUserResponse;
 import com.gameple.core.api.controller.v1.response.UserTokenInfo;
 import com.gameple.core.entity.RefreshToken;
 import com.gameple.core.entity.User;
-import com.gameple.core.entity.UserLoginLog;
 import com.gameple.core.entity.UserProfile;
-import com.gameple.core.enums.LoginLogType;
 import com.gameple.core.helper.JwtUtil;
 import com.gameple.core.helper.error.CoreException;
 import com.gameple.core.helper.error.ErrorType;
 import com.gameple.core.repository.RefreshTokenRepository;
-import com.gameple.core.repository.UserLoginLogRepository;
 import com.gameple.core.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,11 +26,13 @@ public class UserService {
 
     private final JwtUtil jwtUtil;
 
+    private final UserLoginLogService userLoginLogService;
+
+    private final UserTokenService userTokenService;
+
     private final UserRepository userRepository;
 
     private final UserProfileRepository userProfileRepository;
-
-    private final UserLoginLogService userLoginLogService;
 
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -83,15 +81,8 @@ public class UserService {
             throw new CoreException(ErrorType.USER_PASSWORD_MISMATCH);
         }
 
-        String accessToken = jwtUtil.generateToken(targetUser.getEmail());
-        String refreshToken = UUID.randomUUID().toString();
-
-        RefreshToken newRefreshToken = RefreshToken.builder()
-                .userId(targetUser.getId())
-                .token(refreshToken)
-                .build();
-
-        refreshTokenRepository.save(newRefreshToken);
+        String accessToken = userTokenService.generateAccessToken(targetUser);
+        String refreshToken = userTokenService.generateRefreshToken(targetUser);
 
         userLoginLogService.recordSuccess(targetUser.getId());
 
