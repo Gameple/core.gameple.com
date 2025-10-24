@@ -9,6 +9,7 @@ import org.springframework.boot.logging.LogLevel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -42,6 +43,12 @@ public class ApiControllerAdvice {
 
         return new ResponseEntity<>(ApiResponse.error(ErrorType.INVALID_REQUEST),
                 HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MissingRequestCookieException.class)
+    public ResponseEntity<ApiResponse<Object>> handleValidationException(MissingRequestCookieException e) {
+        log.error("Exception : {}", e.getMessage(), e);
+        return new ResponseEntity<>(ApiResponse.error(ErrorType.INVALID_REQUEST), ErrorType.INVALID_REQUEST.getStatus());
     }
 
     @ExceptionHandler(Exception.class)

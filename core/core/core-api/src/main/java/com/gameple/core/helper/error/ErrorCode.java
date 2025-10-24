@@ -8,5 +8,6 @@ public enum ErrorCode {
     E500,
     E1000,
     E1001,
-    E1002
+    E1002,
+    E1003
 }

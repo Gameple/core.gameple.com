@@ -12,7 +12,7 @@ public class RefreshCookieProvider {
         Cookie cookie = new Cookie(REFRESH_TOKEN_KEY, token);
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
-        cookie.setPath("/auth/refresh");
+        cookie.setPath("/");
         cookie.setMaxAge(3 * 24 * 60 * 60);
         cookie.setAttribute("SameSite", "None");
         return cookie;
