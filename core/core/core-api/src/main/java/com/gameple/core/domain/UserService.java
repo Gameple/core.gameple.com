@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import com.gameple.core.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -72,19 +74,19 @@ public class UserService {
     @Transactional
     public UserTokenInfo authenticateUser(AuthenticateUserRequest authenticateUserInfo) {
 
-        User targetUser = userRepository.findByEmail(authenticateUserInfo.getEmail())
+        User userEntity = userRepository.findByEmail(authenticateUserInfo.getEmail())
                 .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
 
-        boolean passwordMatching = passwordEncoder.matches(authenticateUserInfo.getPassword(), targetUser.getPasswordHash());
+        boolean passwordMatching = passwordEncoder.matches(authenticateUserInfo.getPassword(), userEntity.getPasswordHash());
         if(!passwordMatching) {
-            userLoginLogService.recordFail(targetUser.getId());
+            userLoginLogService.recordFail(userEntity.getId());
             throw new CoreException(ErrorType.USER_PASSWORD_MISMATCH);
         }
 
-        String accessToken = userTokenService.generateAccessToken(targetUser);
-        String refreshToken = userTokenService.generateRefreshToken(targetUser);
+        String accessToken = userTokenService.generateAccessToken(userEntity);
+        String refreshToken = userTokenService.generateRefreshToken(userEntity);
 
-        userLoginLogService.recordSuccess(targetUser.getId());
+        userLoginLogService.recordSuccess(userEntity.getId());
 
         UserTokenInfo userTokenInfo = UserTokenInfo.builder()
                 .accessToken(accessToken)
@@ -92,5 +94,23 @@ public class UserService {
                 .build();
 
         return userTokenInfo;
+    }
+
+    @Transactional
+    public String refreshUserToken(String refreshToken) {
+        RefreshToken refreshTokenEntity = refreshTokenRepository.findTopByToken(refreshToken)
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
+
+        boolean refreshTokenExpiry = refreshTokenEntity.getExpiryDate().isBefore(Instant.now());
+        if(refreshTokenExpiry) throw new CoreException(ErrorType.EXPIRED_TOKEN);
+
+        refreshTokenRepository.delete(refreshTokenEntity);
+
+        User userEntity = userRepository.findById(refreshTokenEntity.getUserId())
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
+
+        String accessToken = userTokenService.generateAccessToken(userEntity);
+
+        return accessToken;
     }
 }

@@ -13,7 +13,8 @@ public enum ErrorType {
 
     EMAIL_ALREADY_EXIST(HttpStatus.BAD_REQUEST, ErrorCode.E1000, "이미 존재하는 이메일입니다.", LogLevel.INFO),
     NICKNAME_ALREADY_EXIST(HttpStatus.BAD_REQUEST, ErrorCode.E1001, "이미 존재하는 닉네임입니다.", LogLevel.INFO),
-    USER_PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, ErrorCode.E1002, "비밀번호가 일치하지 않습니다.", LogLevel.INFO);
+    USER_PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, ErrorCode.E1002, "비밀번호가 일치하지 않습니다.", LogLevel.INFO),
+    EXPIRED_TOKEN(HttpStatus.BAD_REQUEST, ErrorCode.E1003, "토큰이 만료되었습니다.", LogLevel.INFO);
 
     private final HttpStatus status;
     private final ErrorCode code;

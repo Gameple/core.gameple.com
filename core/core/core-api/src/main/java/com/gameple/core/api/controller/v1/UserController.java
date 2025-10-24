@@ -7,6 +7,8 @@ import com.gameple.core.api.controller.v1.response.CreateUserResponse;
 import com.gameple.core.api.controller.v1.response.UserTokenInfo;
 import com.gameple.core.domain.UserService;
 import com.gameple.core.helper.RefreshCookieProvider;
+import com.gameple.core.helper.error.CoreException;
+import com.gameple.core.helper.error.ErrorType;
 import com.gameple.core.helper.response.ApiResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -37,6 +39,14 @@ public class UserController {
         response.addCookie(refreshCookie);
         return ApiResponse.success(AuthenticateUserResponse.builder()
                 .accessToken(userTokenInfo.getAccessToken())
+                .build());
+    }
+
+    @PostMapping("/api/v1/user/token-refresh")
+    public ApiResponse<AuthenticateUserResponse> refreshUserToken(@CookieValue(name = RefreshCookieProvider.REFRESH_TOKEN_KEY) String refreshToken) {
+        String newAccessToken = userService.refreshUserToken(refreshToken);
+        return ApiResponse.success(AuthenticateUserResponse.builder()
+                .accessToken(newAccessToken)
                 .build());
     }
 }
