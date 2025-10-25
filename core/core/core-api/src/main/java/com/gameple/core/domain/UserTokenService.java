@@ -2,7 +2,7 @@ package com.gameple.core.domain;
 
 import com.gameple.core.entity.RefreshToken;
 import com.gameple.core.entity.User;
-import com.gameple.core.helper.JwtUtil;
+import com.gameple.core.helper.jwt.JwtUtil;
 import com.gameple.core.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
