@@ -20,6 +20,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/health").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/users", "/api/v1/user/authenticate", "/api/v1/user/token-refresh").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/branch/countries").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form.disable())

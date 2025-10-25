@@ -2,6 +2,7 @@ package com.gameple.core.api.controller.v1.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 @Getter
@@ -18,4 +19,7 @@ public class CreateUserRequest {
 
     @NotBlank
     private String nickName;
+
+    @NotNull
+    private Long countryId;
 }

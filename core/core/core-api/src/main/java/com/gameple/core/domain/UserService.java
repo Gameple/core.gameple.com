@@ -3,12 +3,14 @@ package com.gameple.core.domain;
 import com.gameple.core.api.controller.v1.request.AuthenticateUserRequest;
 import com.gameple.core.api.controller.v1.request.CreateUserRequest;
 import com.gameple.core.api.controller.v1.response.UserTokenInfo;
+import com.gameple.core.entity.CountryInfo;
 import com.gameple.core.entity.RefreshToken;
 import com.gameple.core.entity.User;
 import com.gameple.core.entity.UserProfile;
-import com.gameple.core.helper.JwtUtil;
+import com.gameple.core.helper.jwt.JwtUtil;
 import com.gameple.core.helper.error.CoreException;
 import com.gameple.core.helper.error.ErrorType;
+import com.gameple.core.repository.CountryInfoRepository;
 import com.gameple.core.repository.RefreshTokenRepository;
 import com.gameple.core.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Optional;
-import java.util.UUID;
 
 
 @Service
@@ -38,6 +39,8 @@ public class UserService {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
+    private final CountryInfoRepository countryInfoRepository;
+
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -52,6 +55,9 @@ public class UserService {
         boolean nickNameExisting = userProfileRepository.existsByNickName(newUser.getNickName());
         if(nickNameExisting) throw new CoreException(ErrorType.NICKNAME_ALREADY_EXIST);
 
+        CountryInfo countryInfoEntity = countryInfoRepository.findById(newUser.getCountryId())
+                .orElseThrow(() -> new CoreException(ErrorType.COUNTRY_NOT_EXIST));
+
         String encodedPassword = passwordEncoder.encode(newUser.getPassword());
 
         User user = User.builder()
@@ -64,6 +70,7 @@ public class UserService {
         UserProfile userProfile = UserProfile.builder()
                 .userId(savedUser.getId())
                 .nickName(newUser.getNickName())
+                .countryCode(countryInfoEntity.getIso2())
                 .build();
 
         userProfileRepository.save(userProfile);

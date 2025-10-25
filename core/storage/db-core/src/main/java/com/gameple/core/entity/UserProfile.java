@@ -20,12 +20,16 @@ public class UserProfile {
     @Column(unique = true, nullable = false, length = 255)
     private String nickName;
 
+    @Column(length = 2)
+    private String countryCode;
+
     @Column(length = 255)
     private String imageUrl;
 
     @Builder
-    public UserProfile(Long userId, String nickName) {
+    public UserProfile(Long userId, String nickName, String countryCode) {
         this.userId = userId;
         this.nickName = nickName;
+        this.countryCode = countryCode;
     }
 }

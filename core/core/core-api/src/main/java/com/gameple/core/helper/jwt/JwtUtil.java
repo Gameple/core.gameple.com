@@ -1,4 +1,4 @@
-package com.gameple.core.helper;
+package com.gameple.core.helper.jwt;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

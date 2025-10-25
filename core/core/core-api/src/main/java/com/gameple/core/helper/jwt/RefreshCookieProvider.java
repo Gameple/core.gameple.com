@@ -1,4 +1,4 @@
-package com.gameple.core.helper;
+package com.gameple.core.helper.jwt;
 
 import jakarta.servlet.http.Cookie;
 import org.springframework.stereotype.Component;
