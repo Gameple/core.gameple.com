@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인 위젯</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet" />
+
+    <script type="text/javascript" th:src="@{/js/login.js}"></script>
+
+</head>
+<body>
+
+<div class="login-container">
+    <!-- 로고 영역 -->
+    <div class="logo">
+        <img th:src="@{/images/logo.png}" alt="Gameple Logo">
+    </div>
+
+    <div class="login-title">GAMEPLE LOGIN</div>
+
+    <form id="loginForm" onsubmit="return login(event)">
+        <input type="text" id="email" class="input-field" placeholder="이메일" required>
+        <input type="password" id="password" class="input-field" placeholder="비밀번호" required>
+        <button type="submit" class="login-button">로그인</button>
+    </form>
+
+    <div class="options">
+        <p><a href="#">비밀번호를 잊으셨나요?</a></p>
+        <p>계정이 없으신가요? <a href="#">회원가입</a></p>
+    </div>
+</div>
+
+</body>
+</html>
