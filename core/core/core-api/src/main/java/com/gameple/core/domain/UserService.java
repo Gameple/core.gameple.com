@@ -7,6 +7,7 @@ import com.gameple.core.entity.CountryInfo;
 import com.gameple.core.entity.RefreshToken;
 import com.gameple.core.entity.User;
 import com.gameple.core.entity.UserProfile;
+import com.gameple.core.enums.EntityStatus;
 import com.gameple.core.helper.jwt.JwtUtil;
 import com.gameple.core.helper.error.CoreException;
 import com.gameple.core.helper.error.ErrorType;
@@ -81,7 +82,7 @@ public class UserService {
     @Transactional
     public UserTokenInfo authenticateUser(AuthenticateUserRequest authenticateUserInfo) {
 
-        User userEntity = userRepository.findByEmail(authenticateUserInfo.getEmail())
+        User userEntity = userRepository.findByEmailAndStatus(authenticateUserInfo.getEmail(), EntityStatus.ACTIVE)
                 .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
 
         boolean passwordMatching = passwordEncoder.matches(authenticateUserInfo.getPassword(), userEntity.getPasswordHash());

@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ClientInfo extends BaseEntity {
 
+    @Column(nullable = false)
+    private Long gameCode;
+
     @Column(length = 50, nullable = false, unique = true)
     private String clientSecret;
 

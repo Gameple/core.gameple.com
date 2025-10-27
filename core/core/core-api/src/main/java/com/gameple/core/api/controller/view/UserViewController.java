@@ -4,17 +4,24 @@ import com.gameple.core.domain.ClientInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/widget/v1")
 public class UserViewController {
 
     private final ClientInfoService clientInfoService;
 
-    @GetMapping("/widget/v1/login")
+    @GetMapping("/login")
     public String loginWidget(@RequestParam String redirectUrl) {
         clientInfoService.validateRedirectUrl(redirectUrl);
         return "loginWidget";
+    }
+
+    @GetMapping("/sign-up")
+    public String signupWidget() {
+        return "signupWidget";
     }
 }
