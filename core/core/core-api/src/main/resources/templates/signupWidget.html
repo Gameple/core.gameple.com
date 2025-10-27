@@ -2,40 +2,30 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>GAMEPLE - Login Widget</title>
+    <title>GAMEPLE - Sign Up</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <link th:href="@{/css/style.css}" rel="stylesheet" />
-
     <script type="text/javascript" th:src="@{/js/gameple-error.js}"></script>
-    <script type="text/javascript" th:src="@{/js/login.js}"></script>
-
+    <script type="text/javascript" th:src="@{/js/sign-up.js}" defer></script>
 </head>
 <body>
-
-<input type="hidden" name="redirectUrl" id="redirectUrl" th:value="${param.redirectUrl}" value="" />
-
 <div class="login-container">
     <div class="logo">
         <img th:src="@{/images/logo.png}" alt="Gameple Logo">
     </div>
-
-    <div class="login-title">GAMEPLE</div>
-
-    <form id="loginForm" onsubmit="return login(event)">
+    <div class="login-title">GAMEPLE SIGN UP</div>
+    <form id="signupForm" onsubmit="return signup(event)">
         <input type="text" id="email" class="input-field" placeholder="EMAIL" required>
         <input type="password" id="password" class="input-field" placeholder="PASSWORD" required>
-        <button type="submit" class="login-button">Sign in</button>
+        <small class="helper-text">Password must be 8–20 characters long and include lowercase letters, numbers, and special characters.</small>
+        <input type="password" id="passwordCheck" class="input-field" placeholder="CONFIRM PASSWORD" required>
+        <input type="text" id="nickName" class="input-field" placeholder="NICKNAME" required>
+        <select id="countryId" class="input-field" required>
+            <option value="">Loading countries...</option>
+        </select>
+        <button type="submit" class="login-button">Create Account</button>
     </form>
-
-    <div class="options">
-        <p><a href="#">Forgot password?</a></p>
-        <p>(Don't have?) <a href="/widget/v1/sign-up">Sign up</a></p>
-    </div>
 </div>
-
 </body>
 </html>

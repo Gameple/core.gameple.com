@@ -1,6 +1,7 @@
 package com.gameple.core.repository;
 
 import com.gameple.core.entity.User;
+import com.gameple.core.enums.EntityStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -9,7 +10,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findById(Long id);
 
-    Optional<User> findByEmail(String email);
+    Optional<User> findByEmailAndStatus(String email, EntityStatus status);
 
     boolean existsByEmail(String email);
 }
