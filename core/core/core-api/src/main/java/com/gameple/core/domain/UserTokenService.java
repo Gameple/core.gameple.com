@@ -1,8 +1,10 @@
 package com.gameple.core.domain;
 
+import com.gameple.core.entity.OAuthToken;
 import com.gameple.core.entity.RefreshToken;
 import com.gameple.core.entity.User;
 import com.gameple.core.helper.jwt.JwtUtil;
+import com.gameple.core.repository.OAuthTokenRepository;
 import com.gameple.core.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,11 +19,13 @@ public class UserTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
+    private final OAuthTokenRepository oAuthTokenRepository;
+
     public String generateAccessToken(User user) {
         return jwtUtil.generateToken(user.getEmail());
     }
 
-    public String generateRefreshToken(User user) {
+    public void generateRefreshToken(User user) {
         String refreshToken = UUID.randomUUID().toString();
 
         RefreshToken tokenEntity = RefreshToken.builder()
@@ -30,6 +34,20 @@ public class UserTokenService {
                 .build();
 
         refreshTokenRepository.save(tokenEntity);
-        return refreshToken;
+    }
+
+    public String saveOAuthToken(Long userId, String accessToken) {
+
+        String callback = UUID.randomUUID().toString();
+
+        OAuthToken oAuthTokenEntity = OAuthToken.builder()
+                .userId(userId)
+                .accessToken(accessToken)
+                .callback(callback)
+                .build();
+
+        oAuthTokenRepository.save(oAuthTokenEntity);
+
+        return callback;
     }
 }

@@ -1,5 +1,6 @@
 package com.gameple.core.entity;
 
+import com.gameple.core.enums.ClientType;
 import com.gameple.core.enums.LoginLogType;
 import com.gameple.core.helper.AesEncryptConverter;
 import com.gameple.core.helper.IpAddressHolder;
@@ -26,6 +27,13 @@ public class UserLoginLog {
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(20)")
+    private ClientType clientType;
+
+    @Column(length = 50)
+    private String redirectUrl;
+
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "VARCHAR(20)")
     private LoginLogType status;
 
     @Convert(converter = AesEncryptConverter.class)
@@ -42,8 +50,10 @@ public class UserLoginLog {
     }
 
     @Builder
-    public UserLoginLog(Long userId, LoginLogType loginLogType) {
+    public UserLoginLog(Long userId, String redirectUrl, ClientType clientType, LoginLogType loginLogType) {
         this.userId = userId;
+        this.redirectUrl = redirectUrl;
+        this.clientType = clientType;
         this.status = loginLogType;
     }
 }
