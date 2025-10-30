@@ -1,34 +1,22 @@
 package com.gameple.core.domain;
 
-import com.gameple.core.api.controller.v1.request.AuthenticateUserRequest;
+import com.gameple.core.api.controller.v1.request.OAuthAuthorizeRequest;
 import com.gameple.core.api.controller.v1.request.CreateUserRequest;
-import com.gameple.core.api.controller.v1.response.UserTokenInfo;
-import com.gameple.core.entity.CountryInfo;
-import com.gameple.core.entity.RefreshToken;
-import com.gameple.core.entity.User;
-import com.gameple.core.entity.UserProfile;
+import com.gameple.core.entity.*;
 import com.gameple.core.enums.EntityStatus;
-import com.gameple.core.helper.jwt.JwtUtil;
 import com.gameple.core.helper.error.CoreException;
 import com.gameple.core.helper.error.ErrorType;
-import com.gameple.core.repository.CountryInfoRepository;
-import com.gameple.core.repository.RefreshTokenRepository;
-import com.gameple.core.repository.UserProfileRepository;
+import com.gameple.core.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.gameple.core.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.Optional;
-
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
-
-    private final JwtUtil jwtUtil;
 
     private final UserLoginLogService userLoginLogService;
 
@@ -80,28 +68,24 @@ public class UserService {
     }
 
     @Transactional
-    public UserTokenInfo authenticateUser(AuthenticateUserRequest authenticateUserInfo) {
+    public String oAuthAuthorize(OAuthAuthorizeRequest oAuthAuthorizeRequest) {
 
-        User userEntity = userRepository.findByEmailAndStatus(authenticateUserInfo.getEmail(), EntityStatus.ACTIVE)
+        User userEntity = userRepository.findByEmailAndStatus(oAuthAuthorizeRequest.getEmail(), EntityStatus.ACTIVE)
                 .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
 
-        boolean passwordMatching = passwordEncoder.matches(authenticateUserInfo.getPassword(), userEntity.getPasswordHash());
+        boolean passwordMatching = passwordEncoder.matches(oAuthAuthorizeRequest.getPassword(), userEntity.getPasswordHash());
         if(!passwordMatching) {
-            userLoginLogService.recordFail(userEntity.getId());
+            userLoginLogService.recordFail(userEntity.getId(), oAuthAuthorizeRequest.getRedirectUrl(), oAuthAuthorizeRequest.getClientType());
             throw new CoreException(ErrorType.USER_PASSWORD_MISMATCH);
         }
 
         String accessToken = userTokenService.generateAccessToken(userEntity);
-        String refreshToken = userTokenService.generateRefreshToken(userEntity);
+        String callback = userTokenService.saveOAuthToken(userEntity.getId(), accessToken);
 
-        userLoginLogService.recordSuccess(userEntity.getId());
+        userTokenService.generateRefreshToken(userEntity);
+        userLoginLogService.recordSuccess(userEntity.getId(), oAuthAuthorizeRequest.getRedirectUrl(), oAuthAuthorizeRequest.getClientType());
 
-        UserTokenInfo userTokenInfo = UserTokenInfo.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
-
-        return userTokenInfo;
+        return oAuthAuthorizeRequest.getRedirectUrl() + "?callback=" + callback;
     }
 
     @Transactional

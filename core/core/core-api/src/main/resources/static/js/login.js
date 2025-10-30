@@ -3,20 +3,21 @@ async function login(event) {
 
     const redirectUrl = document.getElementById('redirectUrl').value;
 
-    const response = await fetch('/api/v1/user/authenticate', {
+    const response = await fetch('/api/v1/oauth/authorize', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             email: document.getElementById('email').value,
-            password: document.getElementById('password').value
+            password: document.getElementById('password').value,
+            clientType: document.getElementById('clientType').value,
+            redirectUrl: document.getElementById('redirectUrl').value
         })
     });
 
     const result = await response.json();
 
-    if (response.ok && result.data?.accessToken) {
-        const accessToken = encodeURIComponent(result.data.accessToken);
-        window.location.href = `${redirectUrl}?callback=${accessToken}`;
+    if (response.ok && result.data?.callback) {
+        window.location.href = result.data.callback;
     } else {
         throwGamepleError(result.error?.code);
     }
