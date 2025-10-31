@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/widget/v1")
-public class UserViewController {
+public class UserWidgetController {
 
     private final ClientInfoService clientInfoService;
 

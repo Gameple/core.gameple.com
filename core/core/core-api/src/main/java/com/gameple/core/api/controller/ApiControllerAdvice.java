@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -43,6 +44,12 @@ public class ApiControllerAdvice {
 
         return new ResponseEntity<>(ApiResponse.error(ErrorType.INVALID_REQUEST),
                 HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Object>> handleValidationException(HttpMessageNotReadableException e) {
+        log.error("Exception : {}", e.getMessage(), e);
+        return new ResponseEntity<>(ApiResponse.error(ErrorType.INVALID_REQUEST), ErrorType.INVALID_REQUEST.getStatus());
     }
 
     @ExceptionHandler(MissingRequestCookieException.class)
