@@ -2,11 +2,13 @@ package com.gameple.core.api.controller.v1;
 
 import com.gameple.core.api.controller.v1.request.OAuthAuthorizeRequest;
 import com.gameple.core.api.controller.v1.request.CreateUserRequest;
+import com.gameple.core.api.controller.v1.request.OAuthCallbackRequest;
 import com.gameple.core.api.controller.v1.response.CreateUserResponse;
 import com.gameple.core.api.controller.v1.response.OAuthAuthorizeResponse;
+
+import com.gameple.core.api.controller.v1.response.OAuthCallbackResponse;
 import com.gameple.core.api.controller.v1.response.UserTokenInfo;
 import com.gameple.core.domain.UserService;
-import com.gameple.core.helper.jwt.RefreshCookieProvider;
 import com.gameple.core.helper.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,21 +21,27 @@ public class UserController {
 
     private final UserService userService;
 
-    private final RefreshCookieProvider refreshCookieProvider;
-
     @PostMapping("/users")
-    public ApiResponse<CreateUserResponse> createUser(@Valid @RequestBody CreateUserRequest newUser) {
-        String userEmail = userService.createUser(newUser);
+    public ApiResponse<CreateUserResponse> createUser(@Valid @RequestBody CreateUserRequest createUserRequest) {
+        String userEmail = userService.createUser(createUserRequest);
         return ApiResponse.success(CreateUserResponse.builder()
                 .email(userEmail)
                 .build());
     }
 
     @PostMapping("/oauth/authorize")
-    public ApiResponse<OAuthAuthorizeResponse> oAuthAuthorize(@Valid @RequestBody OAuthAuthorizeRequest authenticateUserInfo) {
-        String callback = userService.oAuthAuthorize(authenticateUserInfo);
+    public ApiResponse<OAuthAuthorizeResponse> oAuthAuthorize(@Valid @RequestBody OAuthAuthorizeRequest oAuthAuthorizeRequest) {
+        String callback = userService.oAuthAuthorize(oAuthAuthorizeRequest);
         return ApiResponse.success(OAuthAuthorizeResponse.builder()
                 .callback(callback)
+                .build());
+    }
+
+    @PostMapping("/oauth/callback")
+    public ApiResponse<OAuthCallbackResponse> oAuthCallback(@Valid @RequestBody OAuthCallbackRequest oAuthCallbackRequest) {
+        UserTokenInfo userTokenInfo = userService.findUserTokens(oAuthCallbackRequest);
+        return ApiResponse.success(OAuthCallbackResponse.builder()
+                .tokenInfo(userTokenInfo)
                 .build());
     }
 

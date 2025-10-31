@@ -2,6 +2,8 @@ package com.gameple.core.domain;
 
 import com.gameple.core.api.controller.v1.request.OAuthAuthorizeRequest;
 import com.gameple.core.api.controller.v1.request.CreateUserRequest;
+import com.gameple.core.api.controller.v1.request.OAuthCallbackRequest;
+import com.gameple.core.api.controller.v1.response.UserTokenInfo;
 import com.gameple.core.entity.*;
 import com.gameple.core.enums.EntityStatus;
 import com.gameple.core.helper.error.CoreException;
@@ -29,6 +31,8 @@ public class UserService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     private final CountryInfoRepository countryInfoRepository;
+
+    private final OAuthTokenRepository oAuthTokenRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -86,6 +90,23 @@ public class UserService {
         userLoginLogService.recordSuccess(userEntity.getId(), oAuthAuthorizeRequest.getRedirectUrl(), oAuthAuthorizeRequest.getClientType());
 
         return oAuthAuthorizeRequest.getRedirectUrl() + "?callback=" + callback;
+    }
+
+    public UserTokenInfo findUserTokens(OAuthCallbackRequest oAuthCallbackRequest) {
+
+        OAuthToken oAuthTokenEntity = oAuthTokenRepository.findByCallback(oAuthCallbackRequest.getCallback())
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
+
+        RefreshToken refreshTokenEntity = refreshTokenRepository.findTopByUserIdOrderByCreatedAtDesc(oAuthTokenEntity.getUserId())
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
+
+        UserTokenInfo userTokenInfo = UserTokenInfo.builder()
+                .accessToken(oAuthTokenEntity.getAccessToken())
+                .refreshToken(refreshTokenEntity.getToken())
+                .refreshTokenExpiryAt(refreshTokenEntity.getExpiryDate())
+                .build();
+
+        return  userTokenInfo;
     }
 
     @Transactional
