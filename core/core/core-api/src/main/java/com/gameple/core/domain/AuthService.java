@@ -18,7 +18,7 @@ import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class AuthService {
 
     private final UserLoginLogService userLoginLogService;
 
