@@ -1,7 +1,6 @@
 package com.gameple.core.api.controller.v1;
 
 import com.gameple.core.api.controller.v1.request.OAuthAuthorizeRequest;
-import com.gameple.core.api.controller.v1.request.CreateUserRequest;
 import com.gameple.core.api.controller.v1.request.OAuthCallbackRequest;
 import com.gameple.core.api.controller.v1.request.TokenRefreshRequest;
 import com.gameple.core.api.controller.v1.response.*;
@@ -19,15 +18,7 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/users")
-    public ApiResponse<CreateUserResponse> createUser(@Valid @RequestBody CreateUserRequest createUserRequest) {
-        String userEmail = authService.createUser(createUserRequest);
-        return ApiResponse.success(CreateUserResponse.builder()
-                .email(userEmail)
-                .build());
-    }
-
-    @PostMapping("/user/token-refresh")
+    @PostMapping("/oauth/token-refresh")
     public ApiResponse<TokenRefreshResponse> refreshUserToken(@Valid @RequestBody TokenRefreshRequest tokenRefreshRequest) {
         String accessToken = authService.refreshUserToken(tokenRefreshRequest.getRefreshToken());
         return ApiResponse.success(TokenRefreshResponse.builder()

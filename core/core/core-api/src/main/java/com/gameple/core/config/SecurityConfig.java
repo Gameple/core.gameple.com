@@ -19,7 +19,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/health").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/users", "/api/v1/oauth/authorize", "/api/v1/user/token-refresh", "/api/v1/oauth/callback").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/user", "/api/v1/oauth/authorize", "/api/v1/oauth/token-refresh", "/api/v1/oauth/callback").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/branch/countries").permitAll()
                         .requestMatchers(HttpMethod.GET, "/widget/**", "/images/**", "/js/**", "/css/**").permitAll()
                         .anyRequest().authenticated()

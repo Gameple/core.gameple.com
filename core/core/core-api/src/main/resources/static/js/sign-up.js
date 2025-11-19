@@ -30,7 +30,7 @@ async function signup(event) {
     };
 
     try {
-        const response = await fetch('/api/v1/users', {
+        const response = await fetch('/api/v1/user', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
